@@ -16,8 +16,14 @@ Adafruit_DCMotor *motorRight = AFMS.getMotor(2);
 Adafruit_DCMotor *motorCenter = AFMS.getMotor(1);
 
 
-// Directions given to motor for each movement
-motorDirections = [] // motorLeft, motorRight, motorCenter
+// Set motor commands to loop over
+// motorLeft, motorRight, motorCenter
+String motorCommands[4][3] = {
+  {"forward", "forward", "forward"}, 
+  {"forward", "forward", "forward"}, 
+  {"backward", "backward", "backward"}, 
+  {"backward", "backward", "backward"}
+};
 
 // Time to let marker move for
 float time_length = 20;
@@ -37,9 +43,6 @@ void setup() {
   motorLeft->setSpeed(20);  
   motorRight->setSpeed(20);
   motorCenter->setSpeed(20);
-
-  // Set motor commands to loop over
-  motorCommands = {{"forward", "forward", "forward"}, {"forward", "forward", "forward"}, {"backward", "backward", "backward"}, {"backward", "backward", "backward"}};
 
   // Set initial motor direections
   setMotorDirection(motorLeft, motorCommands[0][0]);
@@ -67,16 +70,16 @@ void loop() {
 
   // Decrease time interval by 3 whenever new iteration is started to create spiral effect
   if((index - 2) % 4 == 0) {
-    time_length -= 3
+    time_length -= 3;
   }
 
   // Set motor directions
-  setMotorDirection(motorLeft, motorCommands[i][0]);
-  setMotorDirection(motorRight, motorCommands[i][1]);
-  setMotorDirection(motorCenter, motorCommands[i][2]);
+  setMotorDirection(motorLeft, motorCommands[index][0]);
+  setMotorDirection(motorRight, motorCommands[index][1]);
+  setMotorDirection(motorCenter, motorCommands[index][2]);
 
   delay(time_length);
-  i++;
+  index++;
 }
 
 
@@ -86,11 +89,12 @@ void loop() {
  * @param this_motor: the motor to change direction for
  * @param direction: a string representing the direction to set the motor to (forward or backward)
  **/
-void setMotorDirection (this_motor, direction) {
-  if direction == "forward" {
+void setMotorDirection (Adafruit_DCMotor *this_motor, String direction) {
+  if (direction == "forward") {
     this_motor->run(FORWARD);
   }
-  if direction == "backward" {
+  
+  if (direction == "backward") {
     this_motor->run(BACKWARD);
   }
 }
@@ -101,6 +105,6 @@ void setMotorDirection (this_motor, direction) {
  * @param this_motor: the motor to change speed for
  * @param speed: an int representing the speed to set the motor to
  **/
-void setMotorSpeed (this_motor, speed) {
-  this_motor->setSpeed(speed)
+void setMotorSpeed (Adafruit_DCMotor *this_motor, int speed) {
+  this_motor->setSpeed(speed);
 }
