@@ -11,38 +11,43 @@
 
 // Designate motors and motor shield
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
-Adafruit_DCMotor *motorLeft = AFMS.getMotor(3);
-Adafruit_DCMotor *motorRight = AFMS.getMotor(2);
-Adafruit_DCMotor *motorCenter = AFMS.getMotor(1);
+Adafruit_DCMotor *motorLeft = AFMS.getMotor(2);
+Adafruit_DCMotor *motorRight = AFMS.getMotor(1);
+Adafruit_DCMotor *motorCenter = AFMS.getMotor(3);
 
 
 // Set motor commands to loop over
 // motorLeft, motorRight, motorCenter
 String motorCommands[4][3] = {
-  {"forward", "forward", "forward"}, 
-  {"forward", "forward", "forward"}, 
-  {"backward", "backward", "backward"}, 
-  {"backward", "backward", "backward"}
+  {"backward", "forward", "forward"}, 
+  {"backward", "forward", "forward"}, 
+  {"forward", "backward", "backward"}, 
+  {"forward", "backward", "backward"}
+};
+
+int motorSpeed = 100;
+
+int motorSpeeds[4][3] = {
+  {motorSpeed, motorSpeed, 0},
+  {0, 0, motorSpeed},
+  {motorSpeed, motorSpeed, 0},
+  {0, 0, motorSpeed}
 };
 
 // Time to let marker move for
-float time_length = 20;
+float time_length = 2000;
 int index;
 
 void setup() {
   // Start serial
   Serial.begin(9600);
-  if (!AFMS.begin()) {
-    Serial.println("Check wiring");
-    while(1);
-  }
-  
+  AFMS.begin();  // create with the default frequency 1.6KHz
   index = 0;
   
   // Set initial speeds
-  motorLeft->setSpeed(20);  
-  motorRight->setSpeed(20);
-  motorCenter->setSpeed(20);
+  motorLeft->setSpeed(70);  
+  motorRight->setSpeed(70);
+  motorCenter->setSpeed(70);
 
   // Set initial motor direections
   setMotorDirection(motorLeft, motorCommands[0][0]);
@@ -56,30 +61,39 @@ void setup() {
 }
 
 void loop() {
+  // Reset index to 0 (only 4 motor commands in list)
+  if(index == 4) {
+    index = 0;
+  }
+  
+  setMotorDirection(motorLeft, motorCommands[index][0]);
+  setMotorDirection(motorRight, motorCommands[index][1]);
+  setMotorDirection(motorCenter, motorCommands[index][2]);
+  
   // Stop marker if end of design reached
-  if(time_length < 0) {
+  if(time_length <= 0) {
     setMotorSpeed(motorLeft, 0);
     setMotorSpeed(motorRight, 0);
     setMotorSpeed(motorCenter, 0);
   }
 
-  // Reset index to 0 (only 4 motor commands in list)
-  if(index == 4) {
-    index = 0;
+  else {
+    // Set speeds if not end
+    setMotorSpeed(motorLeft, motorSpeeds[index][0]);
+    setMotorSpeed(motorRight, motorSpeeds[index][1]);
+    setMotorSpeed(motorCenter, motorSpeeds[index][2]);
   }
 
   // Decrease time interval by 3 whenever new iteration is started to create spiral effect
   if((index - 2) % 4 == 0) {
-    time_length -= 3;
+    time_length -= 200;
+    
   }
-
-  // Set motor directions
-  setMotorDirection(motorLeft, motorCommands[index][0]);
-  setMotorDirection(motorRight, motorCommands[index][1]);
-  setMotorDirection(motorCenter, motorCommands[index][2]);
 
   delay(time_length);
   index++;
+
+  Serial.println(time_length);
 }
 
 
