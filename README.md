@@ -1,4 +1,4 @@
-# Fairytale Sound Effects
+# Mehendi Bot
 #### Authors: Emma Mascillaro, Rucha Dave, Cherry Pahm, Vanni Bhatnagar, Phillip Post
 
 ## **Project Summary**:
