@@ -1,40 +1,117 @@
+/**
+  * Principles of Integrated Engineering - PIE Final Project
+  * Name: gcode_interpreter
+  * Purpose: interpret gcode commands into arduino for mehendi bot
+
+  * @author: Rucha Dave
+  * @version: 1.1
+  */
+
+#include <Stepper.h>
+
+// Define motors
+Stepper stepperX(STEPS, 8, 9, 10, 11);
+Stepper stepperY(STEPS, 8, 9, 10, 11);
 
 String curr_line;
-int total_length;
+float feedrate = 0;
+float step_delay = 0;
 
+// Define current position of ink
+float x_pos;
+float y_pos;
+float reset;
 
+/**
+  * Provide basic description of project and what each function does
+  */  
 void help() {
   Serial.println("Mehendi Bot");
+}
+
+/**
+  * Set feedrate and step_delay based on the value entered.
+  * @param: fr float representing new feedrate
+  */
+void set_feedrate(float fr) {
+  step_delay = 1000000.0/fr;
+  feedrate = ft;
 }
 
 void setup() {
   Serial.begin(9600);
   help();
-  // set_feedrate(200);
+  set_feedrate(200);
   ready();
 }
 
+/**
+  * Initiate serial
+  */
 void ready() {
-  total_length = 0;
   curr_line = "";
   Serial.print(F("> "));
 }
 
+/**
+  * Using ABSOLUTE positions, move to inputted x,y coordinates. This is done using Breseham's Line Algorithm.
+  * @param: new_x String representing the new x-position
+  * @param: new_y String representing the new y-position
+  */
 void moveLine(String new_x, String new_y) {
-  // Move to new x and new y
-  float x_pos = new_x.toFloat();
-  float y_pos = new_y.toFloat();
+  float x_new = new_x.toFloat();
+  float y_new = new_y.toFloat();
 
-  float dx=newx-px; // distance to move (delta)
-  float dy=newy-py;
-  int dirx=dx > 0?1:-1; // direction to move
-  int diry=dy > 0?1:-1;
-  dx=abs(dx); // absolute delta
-  dy=abs(dy);  
-  Serial.print("Move to X: ");
-  Serial.print(new_x);
-  Serial.print(" Y: ");
-  Serial.println(new_y);
+  // Find relative distance to move
+  float x_change = abs(x_new - x_pos);
+  float y_change = abs(y_new - y_pos);
+
+  int x_dir;
+  int y_dir; 
+
+  // Set direction of x movement
+  if (x_new > x_pos) {
+    x_dir = 1;
+  } else {
+    x_dir = -1;
+  }
+
+  // Set direction of y movement
+  if (y_new > y_pos) {
+    y_dir = 1;
+  } else {
+    y_dir = -1;
+  }
+
+  // Implement Breseham's Algorithm
+  if (x_change > y_change) {
+    reset = x_change / 2;
+    for (int i = 0; i < x_change; i++) {
+      stepperX.step(x_dir);
+      reset += y_change;
+      if (reset >= x_change) {
+        reset -= x_change;
+        stepperY.step(y_dir);
+      }
+      pause(step_delay);
+    }
+  }
+  else {
+    reset = y_change / 2;
+    for (int i = 0; i < y_change; i++) {
+      stepperY.step(y_dir);   
+      reset += x_change;
+      if (reset >= y_change) {
+        reset -= y_change;
+        stepperX.step(x_dir)
+      }
+      pause(step_delay);
+    }
+  }
+
+  // Set new positions
+  x_pos = x_new;
+  y_pos = y_new;
 }
 
 void loop() {
@@ -53,19 +130,20 @@ void loop() {
   }
 }
 
+/**
+  * Given commands in GCode, perform the actions required
+  */
 void runCommand() {
-  // Run command given
-  int G_command = (curr_line.substring(curr_line.indexOf("G") + 1, curr_line.indexOf("G") + 3)).toInt();
+  int G_command = (curr_line.substring(curr_line.indexOf("G") + 1, curr_line.indexOf(" ") + 1)).toInt();
   Serial.println(G_command);
 
+  // Run G commands
   if (G_command != 0) {
-    // Run G commands
-
+    // If 01 or 1 command, move in a line to the position X, Y given at speed F given (absolute positions)  
     if (G_command == 1) {
-      
-      // If 01, move in a line to the position X, Y given at speed F given
       int F_speed_index = curr_line.indexOf("F");
-      // set_feedrate(curr_line[F_speed_index]);
+      set_feedrate(curr_line[F_speed_index]);
+      
       int X_index = curr_line.indexOf("X");
       int X_end = X_index + curr_line.substring(X_index).indexOf(" ");
       int Y_index = curr_line.indexOf("Y");
