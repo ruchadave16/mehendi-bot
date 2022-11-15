@@ -122,7 +122,7 @@ void loop() {
 
     // Get next character from Serial
     curr_line += this_char;
-    if (this_char == '\n') {
+    if (this_char == ';\n') {
       Serial.print(F("\r\n"));
       runCommand();
       curr_line = "";
@@ -139,6 +139,7 @@ void runCommand() {
 
   // Run G commands
   if (G_command != 0) {
+
     // If 01 or 1 command, move in a line to the position X, Y given at speed F given (absolute positions)  
     if (G_command == 1) {
       int F_speed_index = curr_line.indexOf("F");
@@ -148,7 +149,11 @@ void runCommand() {
       int X_end = X_index + curr_line.substring(X_index).indexOf(" ");
       int Y_index = curr_line.indexOf("Y");
 
-      moveLine(curr_line.substring(X_index + 1, X_end + 1), curr_line.substring(Y_index + 1));  
+      Serial.print("X: ");
+      Serial.println(curr_line.substring(X_index + 1, X_end + 1));
+      Serial.print("Y: ");
+      Serial.println(curr_line.substring(Y_index + 1));
+      // moveLine(curr_line.substring(X_index + 1, X_end + 1), curr_line.substring(Y_index + 1));  
     }
 
   //   if G_command == "2" {
@@ -167,8 +172,8 @@ void runCommand() {
       
   //   }
 
+    // If 04, delay for the time P given
     if (G_command == 4) {
-      // If 04, delay for the time P given
       int delay_period = curr_line.substring(curr_line.indexOf("P") + 1).toInt();
       delay(delay_period * 1000);
       Serial.println("Done");
