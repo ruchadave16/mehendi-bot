@@ -10,8 +10,12 @@
 #include <Stepper.h>
 
 // Define motors
-Stepper stepperX(STEPS, 8, 9, 10, 11);
-Stepper stepperY(STEPS, 8, 9, 10, 11);
+Stepper stepperY1(200, 4, 5);
+Stepper stepperY2(200, 6, 7);
+Stepper stepperX(200, 2, 3);
+
+int STEPS = 200; 
+int SPEED = 500;
 
 String curr_line;
 float feedrate = 0;
@@ -35,13 +39,17 @@ void help() {
   */
 void set_feedrate(float fr) {
   step_delay = 1000000.0/fr;
-  feedrate = ft;
+  feedrate = fr;
 }
 
 void setup() {
   Serial.begin(9600);
   help();
   set_feedrate(200);
+
+  stepperX.setSpeed(SPEED);
+  stepperY1.setSpeed(SPEED);
+  stepperY2.setSpeed(SPEED);
   ready();
 }
 
@@ -51,6 +59,11 @@ void setup() {
 void ready() {
   curr_line = "";
   Serial.print(F("> "));
+}
+
+void pause(long ms) {
+  delay(ms/1000);
+  delayMicroseconds(ms%1000);  // delayMicroseconds doesn't work for values > ~16k.
 }
 
 /**
@@ -91,7 +104,8 @@ void moveLine(String new_x, String new_y) {
       reset += y_change;
       if (reset >= x_change) {
         reset -= x_change;
-        stepperY.step(y_dir);
+        stepperY1.step(y_dir);
+        stepperY2.step(y_dir);
       }
       pause(step_delay);
     }
@@ -99,11 +113,12 @@ void moveLine(String new_x, String new_y) {
   else {
     reset = y_change / 2;
     for (int i = 0; i < y_change; i++) {
-      stepperY.step(y_dir);   
+      stepperY1.step(y_dir); 
+      stepperY2.step(y_dir);  
       reset += x_change;
       if (reset >= y_change) {
         reset -= y_change;
-        stepperX.step(x_dir)
+        stepperX.step(x_dir);
       }
       pause(step_delay);
     }
@@ -117,13 +132,12 @@ void moveLine(String new_x, String new_y) {
 void loop() {
   if (Serial.available()) {
     char this_char = Serial.read();
-    Serial.print("Found Character: ");
-    Serial.println(this_char);
 
     // Get next character from Serial
     curr_line += this_char;
     if (this_char == ';\n') {
       Serial.print(F("\r\n"));
+      Serial.println(curr_line);
       runCommand();
       curr_line = "";
     }
