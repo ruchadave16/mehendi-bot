@@ -4,7 +4,7 @@
     Purpose: Guide a marker into a square spiral using 3 DC motors
 
     @author: Rucha Dave
-    @version: 1.0 10/31/2020
+    @version: 1.0 10/31/2022
  **/
  
 #include <Adafruit_MotorShield.h>
