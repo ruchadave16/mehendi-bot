@@ -1,5 +1,5 @@
 # Mehendi Bot
-#### Authors: Emma Mascillaro, Rucha Dave, Cherry Pahm, Vanni Bhatnagar, Phillip Post
+#### Authors: Emma Mascillaro, Rucha Dave, Cherry Pham, Vanni Bhatnagar, Phillip Post
 
 ## **Project Summary**:
 This repository contains our Fall 2022 Principles of Integrated Engineering Final project.
