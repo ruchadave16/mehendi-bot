@@ -135,7 +135,8 @@ void loop() {
 
     // Get next character from Serial
     curr_line += this_char;
-    if (this_char == ';\n') {
+    
+    if (this_char == ';' || '\n') {
       Serial.print(F("\r\n"));
       Serial.println(curr_line);
       runCommand();
