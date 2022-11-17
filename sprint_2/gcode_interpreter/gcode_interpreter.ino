@@ -11,15 +11,15 @@
 
 // Define motors
 Stepper stepperY1(200, 4, 5);
-Stepper stepperY2(200, 6, 7);
-Stepper stepperX(200, 2, 3);
+Stepper stepperX(200, 6, 7);
+Stepper stepperY2(200, 2, 3);
 
 int STEPS = 200; 
-int SPEED = 500;
+int SPEED = 5000;
 
 String curr_line;
 float feedrate = 0;
-float step_delay = 0;
+float step_delay = 1;
 
 // Define current position of ink
 float x_pos;
@@ -45,11 +45,13 @@ void set_feedrate(float fr) {
 void setup() {
   Serial.begin(9600);
   help();
-  set_feedrate(200);
-
+  set_feedrate(5000);
   stepperX.setSpeed(SPEED);
   stepperY1.setSpeed(SPEED);
   stepperY2.setSpeed(SPEED);
+
+  x_pos = 0;
+  y_pos = 0;
   ready();
 }
 
@@ -61,13 +63,18 @@ void ready() {
   Serial.print(F("> "));
 }
 
+/**
+  * Create a delay for time specified
+  * @param: ms long representing the milliseconds of delay wanted
+  */
 void pause(long ms) {
   delay(ms/1000);
   delayMicroseconds(ms%1000);  // delayMicroseconds doesn't work for values > ~16k.
 }
 
 /**
-  * Using ABSOLUTE positions, move to inputted x,y coordinates. This is done using Breseham's Line Algorithm.
+  * Using ABSOLUTE positions, move to inputted x,y coordinates. 
+  * This is done using Breseham's Line Algorithm.
   * @param: new_x String representing the new x-position
   * @param: new_y String representing the new y-position
   */
@@ -81,19 +88,19 @@ void moveLine(String new_x, String new_y) {
 
   int x_dir;
   int y_dir; 
-
+  
   // Set direction of x movement
   if (x_new > x_pos) {
-    x_dir = 1;
-  } else {
     x_dir = -1;
+  } else {
+    x_dir = 1;
   }
 
   // Set direction of y movement
   if (y_new > y_pos) {
-    y_dir = 1;
-  } else {
     y_dir = -1;
+  } else {
+    y_dir = 1;
   }
 
   // Implement Breseham's Algorithm
@@ -107,12 +114,14 @@ void moveLine(String new_x, String new_y) {
         stepperY1.step(y_dir);
         stepperY2.step(y_dir);
       }
-      pause(step_delay);
+      // pause(step_delay);
     }
   }
   else {
+    Serial.println(y_change);
     reset = y_change / 2;
     for (int i = 0; i < y_change; i++) {
+      Serial.print(step_delay);
       stepperY1.step(y_dir); 
       stepperY2.step(y_dir);  
       reset += x_change;
@@ -120,9 +129,10 @@ void moveLine(String new_x, String new_y) {
         reset -= y_change;
         stepperX.step(x_dir);
       }
-      pause(step_delay);
+      // pause(step_delay);
     }
   }
+  set_feedrate(5000);
 
   // Set new positions
   x_pos = x_new;
@@ -131,15 +141,17 @@ void moveLine(String new_x, String new_y) {
 
 void loop() {
   if (Serial.available()) {
-    char this_char = Serial.read();
-
     // Get next character from Serial
+    char this_char = Serial.read();
     curr_line += this_char;
     
-    if (this_char == ';' || '\n') {
-      Serial.print(F("\r\n"));
-      Serial.println(curr_line);
+    // Run command per line
+    if (this_char == ';') {
+      // Serial.print(F("\r\n"));
+      // Serial.println(curr_line);
+      
       runCommand();
+      Serial.println(curr_line);
       curr_line = "";
     }
   }
@@ -150,15 +162,18 @@ void loop() {
   */
 void runCommand() {
   int G_command = (curr_line.substring(curr_line.indexOf("G") + 1, curr_line.indexOf(" ") + 1)).toInt();
-  Serial.println(G_command);
+  // Serial.print("Index: ");
+  // Serial.println(curr_line.indexOf("G"));
+  // Serial.println(G_command);
 
   // Run G commands
   if (G_command != 0) {
-
     // If 01 or 1 command, move in a line to the position X, Y given at speed F given (absolute positions)  
     if (G_command == 1) {
       int F_speed_index = curr_line.indexOf("F");
-      set_feedrate(curr_line[F_speed_index]);
+      if (F_speed_index > -1) {
+        set_feedrate(curr_line[F_speed_index]);
+      }
       
       int X_index = curr_line.indexOf("X");
       int X_end = X_index + curr_line.substring(X_index).indexOf(" ");
@@ -167,8 +182,8 @@ void runCommand() {
       Serial.print("X: ");
       Serial.println(curr_line.substring(X_index + 1, X_end + 1));
       Serial.print("Y: ");
-      Serial.println(curr_line.substring(Y_index + 1));
-      // moveLine(curr_line.substring(X_index + 1, X_end + 1), curr_line.substring(Y_index + 1));  
+      Serial.println(curr_line.substring(Y_index + 1, curr_line.length() - 1));
+      moveLine(curr_line.substring(X_index + 1, X_end + 1), curr_line.substring(Y_index + 1));  
     }
 
   //   if G_command == "2" {

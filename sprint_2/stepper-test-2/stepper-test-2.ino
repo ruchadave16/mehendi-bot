@@ -1,9 +1,17 @@
+/**
+  * Principles of Integrated Engineering - PIE Final Project
+  * Name: gcode_interpreter
+  * Purpose: interpret gcode commands into arduino for mehendi bot
+
+  * @author: Cherry Pham, Emma Mascillaro, and Rucha Dave 
+  * @version: 1.1
+  */
 #include <Stepper.h>
 
 // Define motors
 Stepper stepperY1(200, 4, 5);
-Stepper stepperY2(200, 6, 7);
-Stepper stepperX(200, 2, 3);
+Stepper stepperX(200, 6, 7);
+Stepper stepperY2(200, 2, 3);
 
 String curr_line;
 float feedrate = 0;
@@ -23,15 +31,16 @@ void help() {
 
 void setup() {
   Serial.begin(9600);
-  stepperX.setSpeed(300);
-  stepperY1.setSpeed(300);
-  stepperY2.setSpeed(300);
+  
+  stepperY1.setSpeed(0);
+  stepperY2.setSpeed(0);
+
   help();
 }
 
 
 void loop() {
-  stepperX.step(1);
-  stepperY1.step(-1);
-  stepperY2.step(-1);
+  // Move motors in direction specified
+  stepperY1.step(1);
+  stepperY2.step(1);
 }
