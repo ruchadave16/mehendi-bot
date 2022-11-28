@@ -30,7 +30,7 @@ float reset;
   * Provide basic description of project and what each function does
   */  
 void help() {
-  Serial.println("Mehendi Bot");
+  // Serial.println("Mehendi Bot");
 }
 
 /**
@@ -43,7 +43,8 @@ void set_feedrate(float fr) {
 }
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
+  Serial.setTimeout(1);
   help();
   set_feedrate(5000);
   stepperX.setSpeed(SPEED);
@@ -60,7 +61,7 @@ void setup() {
   */
 void ready() {
   curr_line = "";
-  Serial.print(F("> "));
+  // Serial.print(F("> "));
 }
 
 /**
@@ -149,9 +150,8 @@ void loop() {
     if (this_char == ';') {
       // Serial.print(F("\r\n"));
       // Serial.println(curr_line);
-      
+      Serial.print(curr_line);
       runCommand();
-      Serial.println(curr_line);
       curr_line = "";
     }
   }
@@ -161,7 +161,13 @@ void loop() {
   * Given commands in GCode, perform the actions required
   */
 void runCommand() {
-  int G_command = (curr_line.substring(curr_line.indexOf("G") + 1, curr_line.indexOf(" ") + 1)).toInt();
+  int G_command;
+  if (curr_line.indexOf(" ") != -1) {
+    G_command = (curr_line.substring(curr_line.indexOf("G") + 1, curr_line.indexOf(" ") + 1)).toInt();
+  }
+  else {
+    G_command = (curr_line.substring(curr_line.indexOf("G") + 1)).toInt();    
+  }
   // Serial.print("Index: ");
   // Serial.println(curr_line.indexOf("G"));
   // Serial.println(G_command);
@@ -179,11 +185,12 @@ void runCommand() {
       int X_end = X_index + curr_line.substring(X_index).indexOf(" ");
       int Y_index = curr_line.indexOf("Y");
 
-      Serial.print("X: ");
-      Serial.println(curr_line.substring(X_index + 1, X_end + 1));
-      Serial.print("Y: ");
-      Serial.println(curr_line.substring(Y_index + 1, curr_line.length() - 1));
-      moveLine(curr_line.substring(X_index + 1, X_end + 1), curr_line.substring(Y_index + 1));  
+      // Serial.print("X: ");
+      // Serial.println(curr_line.substring(X_index + 1, X_end + 1));
+      // Serial.print("Y: ");
+      // Serial.println(curr_line.substring(Y_index + 1, curr_line.length() - 1));
+      delay(10000);
+      // moveLine(curr_line.substring(X_index + 1, X_end + 1), curr_line.substring(Y_index + 1)); 
     }
 
   //   if G_command == "2" {
@@ -206,11 +213,12 @@ void runCommand() {
     if (G_command == 4) {
       int delay_period = curr_line.substring(curr_line.indexOf("P") + 1).toInt();
       delay(delay_period * 1000);
-      Serial.println("Done");
+      // Serial.println("Done");
     }
     
   }
   else {
-    Serial.println("No G");
+    // Serial.println("No G");
   }
+  // Serial.print("done");
 }
