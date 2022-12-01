@@ -142,11 +142,11 @@ void moveLine(String new_x, String new_y) {
 
 void loop() {
   if (Serial.available()) {
-    //   // delay(5000);
+    
     // Serial.print("Start");
     // delay(1000);
     // Serial.print("Next");
-    // delay(500);
+    // delay(3);
 
     char this_char = Serial.read();
     curr_line += this_char;
@@ -154,10 +154,8 @@ void loop() {
     // Run command per line
     if ((this_char == ';') && (curr_line.length() > 0)) {
       Serial.print(curr_line);
-      // runCommand();
+      runCommand();
       curr_line = "";
-
-  
   
   // Get next character from Serial
   // Serial.print("Character: " + this_char);
