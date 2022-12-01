@@ -142,19 +142,28 @@ void moveLine(String new_x, String new_y) {
 
 void loop() {
   if (Serial.available()) {
-    Serial.println("Next");    
-    // // Get next character from Serial
-    // char this_char = Serial.read();
-    // curr_line += this_char;
-    // // Run command per line
-    // if (this_char == ';') {
-    //   Serial.print("Here: " + curr_line);
-    //   runCommand();
-    //   curr_line = "";
-    //   // Serial.print(F("\r\n"));
-    //   // Serial.println(curr_line);
-    //   // Serial.print(curr_line);
-    // }
+    
+    // Serial.print("Start");
+    // delay(1000);
+    // Serial.print("Next");
+    // delay(3);
+
+    char this_char = Serial.read();
+    curr_line += this_char;
+
+    // Run command per line
+    if ((this_char == ';') && (curr_line.length() > 0)) {
+      Serial.print(curr_line);
+      runCommand();
+      curr_line = "";
+  
+  // Get next character from Serial
+  // Serial.print("Character: " + this_char);
+
+    // Serial.print(F("\r\n"));
+    // Serial.println(curr_line);
+    // Serial.print(curr_line);
+    }
   }
 }
 
