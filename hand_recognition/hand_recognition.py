@@ -14,8 +14,13 @@ def empty(a):
 # Get contour function
 def getContours(img, imgContour):
     contours, hierachies = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-    cv2.drawContours(imgContour, contours, -1, (255,0,255), 7)
+    cv2.drawContours(imgContour, contours, -1, (255,0,255), 3)
+    # for cnt in contours:
+    #     area = cv2.contourArea(cnt)
+    #     if area > 1000:
+    #         cv2.drawContours(imgContour, cnt, -1, (255,0,255), 3)
 
+# def getAreaBox()
 # Live video reading
 frameWidth = 640
 frameHeight = 480
@@ -51,5 +56,3 @@ while True:
     
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-
-
