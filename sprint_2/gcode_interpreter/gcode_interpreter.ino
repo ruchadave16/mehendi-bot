@@ -142,18 +142,19 @@ void moveLine(String new_x, String new_y) {
 
 void loop() {
   if (Serial.available()) {
-    // Get next character from Serial
-    char this_char = Serial.read();
-    curr_line += this_char;
-    
-    // Run command per line
-    if (this_char == ';') {
-      // Serial.print(F("\r\n"));
-      // Serial.println(curr_line);
-      Serial.print(curr_line);
-      runCommand();
-      curr_line = "";
-    }
+    Serial.println("Next");    
+    // // Get next character from Serial
+    // char this_char = Serial.read();
+    // curr_line += this_char;
+    // // Run command per line
+    // if (this_char == ';') {
+    //   Serial.print("Here: " + curr_line);
+    //   runCommand();
+    //   curr_line = "";
+    //   // Serial.print(F("\r\n"));
+    //   // Serial.println(curr_line);
+    //   // Serial.print(curr_line);
+    // }
   }
 }
 
@@ -175,6 +176,7 @@ void runCommand() {
   // Run G commands
   if (G_command != 0) {
     // If 01 or 1 command, move in a line to the position X, Y given at speed F given (absolute positions)  
+    // Serial.print("")
     if (G_command == 1) {
       int F_speed_index = curr_line.indexOf("F");
       if (F_speed_index > -1) {
