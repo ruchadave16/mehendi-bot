@@ -15,7 +15,7 @@ Stepper stepperX(200, 6, 7);
 Stepper stepperY2(200, 2, 3);
 
 int STEPS = 200; 
-int SPEED = 5000;
+int SPEED = 50;
 
 String curr_line;
 float feedrate = 0;
@@ -119,10 +119,10 @@ void moveLine(String new_x, String new_y) {
     }
   }
   else {
-    Serial.println(y_change);
+    // Serial.println(y_change);
     reset = y_change / 2;
     for (int i = 0; i < y_change; i++) {
-      Serial.print(step_delay);
+      // Serial.print(step_delay);
       stepperY1.step(y_dir); 
       stepperY2.step(y_dir);  
       reset += x_change;
@@ -172,6 +172,7 @@ void loop() {
   */
 void runCommand() {
   int G_command;
+  
   if (curr_line.indexOf(" ") != -1) {
     G_command = (curr_line.substring(curr_line.indexOf("G") + 1, curr_line.indexOf(" ") + 1)).toInt();
   }
@@ -200,8 +201,8 @@ void runCommand() {
       // Serial.println(curr_line.substring(X_index + 1, X_end + 1));
       // Serial.print("Y: ");
       // Serial.println(curr_line.substring(Y_index + 1, curr_line.length() - 1));
-      delay(10000);
-      // moveLine(curr_line.substring(X_index + 1, X_end + 1), curr_line.substring(Y_index + 1)); 
+      // delay(10000);
+      moveLine(curr_line.substring(X_index + 1, X_end + 1), curr_line.substring(Y_index + 1)); 
     }
 
   //   if G_command == "2" {

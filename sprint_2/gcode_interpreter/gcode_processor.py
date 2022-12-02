@@ -3,7 +3,7 @@
 from serial import Serial
 import time
 
-arduino = Serial(port='/dev/ttyACM2', baudrate=115200, timeout=.1)
+arduino = Serial(port='/dev/ttyACM1', baudrate=115200, timeout=.1)
 
 def fetch_data():
     """
@@ -41,5 +41,5 @@ def write_to_serial(gcode_array):
             print(f"Received: '{answer}'")
 
             print("Start sleep")
-            time.sleep(1.0)
+            time.sleep(5.0)
             print("End sleep")
