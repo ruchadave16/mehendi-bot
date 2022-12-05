@@ -32,8 +32,13 @@ void help() {
 void setup() {
   Serial.begin(9600);
   
-  stepperY1.setSpeed(0);
-  stepperY2.setSpeed(0);
+  // stepperY1.setSpeed(50);
+  // stepperY2.setSpeed(50);
+
+  // stepperY1.setSpeed(0);
+  // stepperY2.setSpeed(0);
+
+  stepperX.setSpeed(100);
 
   help();
 }
@@ -41,6 +46,8 @@ void setup() {
 
 void loop() {
   // Move motors in direction specified
-  stepperY1.step(1);
-  stepperY2.step(1);
+  // stepperY1.step(1);
+  // stepperY2.step(1);
+  stepperX.step(1);
 }
+
