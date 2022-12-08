@@ -19,6 +19,7 @@ def write_read(x):
     print(f"Sent: {x}")
     time.sleep(1.0)
     data = fetch_data()
+
     if data == "\n":
         data = fetch_data()
     return(data)
@@ -37,9 +38,9 @@ def write_to_serial(gcode_array):
 
     for command in gcode_array:
         if command[0:2] == "G1":
-            answer = write_read(command)
-            print(f"Received: '{answer}'")
+            data = write_read(command)
+            print(f"Received: '{data}'")
 
-            print("Start sleep")
-            time.sleep(1.0)
-            print("End sleep")
+            while "G1" not in data:
+                time.sleep(0.5)
+                data = fetch_data()

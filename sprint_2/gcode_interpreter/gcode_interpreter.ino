@@ -25,6 +25,8 @@ float step_delay = 1;
 float x_pos;
 float y_pos;
 float reset;
+float x_change;
+float y_change;
 
 /**
   * Provide basic description of project and what each function does
@@ -80,12 +82,12 @@ void pause(long ms) {
   * @param: new_y String representing the new y-position
   */
 void moveLine(String new_x, String new_y) {
-  float x_new = new_x.toFloat() * 10;
-  float y_new = new_y.toFloat() * 10;
+  float x_new = new_x.toFloat() * 7;
+  float y_new = new_y.toFloat() * 7;
 
   // Find relative distance to move
-  float x_change = abs(x_new - x_pos);
-  float y_change = abs(y_new - y_pos);
+  x_change = abs(x_new - x_pos);
+  y_change = abs(y_new - y_pos);
 
   int x_dir;
   int y_dir; 
