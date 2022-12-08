@@ -9,9 +9,9 @@
 #include <Stepper.h>
 
 // Define motors
-Stepper stepperY1(200, 4, 5);
-Stepper stepperX(200, 6, 7);
-Stepper stepperY2(200, 2, 3);
+Stepper stepperY1(200, 2, 3);
+Stepper stepperX(200, 5, 6);
+//Stepper stepperY2(200, 6, 7);
 
 String curr_line;
 float feedrate = 0;
@@ -22,32 +22,18 @@ float x_pos;
 float y_pos;
 float reset;
 
-/**
-  * Provide basic description of project and what each function does
-  */  
-void help() {
-  Serial.println("Mehendi Bot");
-}
-
 void setup() {
   Serial.begin(9600);
-  
-  // stepperY1.setSpeed(50);
-  // stepperY2.setSpeed(50);
 
-  // stepperY1.setSpeed(0);
-  // stepperY2.setSpeed(0);
-
+  stepperY1.setSpeed(50);
+//  stepperY2.setSpeed(50);
   stepperX.setSpeed(100);
-
-  help();
 }
 
 
 void loop() {
   // Move motors in direction specified
-  // stepperY1.step(1);
-  // stepperY2.step(1);
-  stepperX.step(1);
+   stepperY1.step(1);
+//   stepperY2.step(1);
+   stepperX.step(1);
 }
-

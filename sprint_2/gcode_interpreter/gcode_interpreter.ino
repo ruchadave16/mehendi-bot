@@ -10,9 +10,9 @@
 #include <Stepper.h>
 
 // Define motors
-Stepper stepperY1(200, 4, 5);
-Stepper stepperX(200, 6, 7);
-Stepper stepperY2(200, 2, 3);
+Stepper stepperY1(200, 2, 3);
+Stepper stepperX(200, 5, 6);
+//Stepper stepperY2(200, 2, 3);
 
 int STEPS = 200; 
 int SPEED = 50;
@@ -49,7 +49,7 @@ void setup() {
   set_feedrate(5000);
   stepperX.setSpeed(SPEED);
   stepperY1.setSpeed(SPEED);
-  stepperY2.setSpeed(SPEED);
+//  stepperY2.setSpeed(SPEED);
 
   x_pos = 0;
   y_pos = 0;
@@ -80,8 +80,8 @@ void pause(long ms) {
   * @param: new_y String representing the new y-position
   */
 void moveLine(String new_x, String new_y) {
-  float x_new = new_x.toFloat();
-  float y_new = new_y.toFloat();
+  float x_new = new_x.toFloat() * 10;
+  float y_new = new_y.toFloat() * 10;
 
   // Find relative distance to move
   float x_change = abs(x_new - x_pos);
@@ -113,7 +113,7 @@ void moveLine(String new_x, String new_y) {
       if (reset >= x_change) {
         reset -= x_change;
         stepperY1.step(y_dir);
-        stepperY2.step(y_dir);
+//        stepperY2.step(y_dir);
       }
       // pause(step_delay);
     }
@@ -124,7 +124,7 @@ void moveLine(String new_x, String new_y) {
     for (int i = 0; i < y_change; i++) {
       // Serial.print(step_delay);
       stepperY1.step(y_dir); 
-      stepperY2.step(y_dir);  
+//      stepperY2.step(y_dir);  
       reset += x_change;
       if (reset >= y_change) {
         reset -= y_change;
