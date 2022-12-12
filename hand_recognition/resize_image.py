@@ -1,8 +1,18 @@
+"""
+TODO
+"""
 from PIL import Image
 
 import numpy as np
 
 def Resize_Design(hand_width, hand_length):
+    """
+    TODO
+    
+    Args:
+        hand_width: A TODO
+        hand_length: A TODO
+    """
     smaller_hand_edge = min(hand_width, hand_length)
 
     # get image and determine file type

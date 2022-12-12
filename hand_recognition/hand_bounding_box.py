@@ -1,3 +1,7 @@
+"""
+TODO
+"""
+
 import cv2
 import numpy as np
 
@@ -6,9 +10,16 @@ def empty(a):
     pass
 
 # Get contour function
-def getContours(img, imgContour):
+def getContours(img, img_contour):
+    """
+    TODO
+
+    Args:
+        img: TODO
+        img_contour: TODO
+    """
     contours, hierachies = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-    cv2.drawContours(imgContour, contours, -1, (255,0,255), 3)
+    cv2.drawContours(img_contour, contours, -1, (255,0,255), 3)
 
 
 # Generalize Resolution

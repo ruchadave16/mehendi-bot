@@ -1,3 +1,7 @@
+"""
+TODO
+"""
+
 from image_capture import Capture_Image
 from mediapipe_hand_test import Get_Landmark_Coordinates
 from hand_size_analysis import Get_Hand_Width, Get_Hand_Length

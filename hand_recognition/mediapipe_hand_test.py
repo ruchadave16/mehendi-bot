@@ -1,3 +1,6 @@
+"""
+TODO
+"""
 import cv2
 import os
 import matplotlib.pyplot as plt
@@ -6,7 +9,15 @@ import mediapipe as mp
 
 # For static images:
 def Get_Landmark_Coordinates(IMAGE_FILES):
+  """
+  TODO
 
+  Args:
+    image_files: TODO
+  
+  Returns:
+  TODO
+  """
   mp_drawing = mp.solutions.drawing_utils
   mp_drawing_styles = mp.solutions.drawing_styles
   mp_hands = mp.solutions.hands
