@@ -24,7 +24,7 @@ def getContours(img, imgContour):
 # Live video reading
 frameWidth = 640
 frameHeight = 480
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(2)
 
 # Generalize Resolution
 changeRes(frameWidth, frameHeight)
