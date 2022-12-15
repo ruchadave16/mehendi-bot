@@ -6,7 +6,7 @@ def Resize_Design(hand_width, hand_length):
     smaller_hand_edge = min(hand_width, hand_length)
 
     # get image and determine file type
-    filepath = "/home/emascillaro/Documents/Emma/Olin/Sophomore_Year/Fall_Semester/PIE/final_project/mehendi-bot/sprint_2/jpg_svg_gcode/shrek.jpeg"
+    filepath = "/home/emascillaro/Documents/Emma/Olin/Sophomore_Year/Fall_Semester/PIE/final_project/mehendi-bot/sprint_2/jpg_svg_gcode/mehendi_design_1.jpg"
     filetype_position = filepath.find(".")
     file_type = filepath[filetype_position:]
 
