@@ -1,3 +1,7 @@
+"""
+TODO
+"""
+
 from svg_to_gcode.svg_parser import parse_file
 from svg_to_gcode.compiler import Compiler, interfaces
 

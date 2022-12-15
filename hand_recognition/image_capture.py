@@ -1,6 +1,12 @@
+"""
+TODO
+"""
 import cv2
 
 def Capture_Image():
+    """
+    TODO
+    """
     # Define which camera to use (0 = webcam)
     videoCaptureObject = cv2.VideoCapture(2)
 

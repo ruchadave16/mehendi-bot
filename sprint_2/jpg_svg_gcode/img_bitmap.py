@@ -1,7 +1,20 @@
+"""
+TODO
+"""
+
 from PIL import Image
 import numpy as np
 
 def img_bitmap_converter(img_file):
+    """
+    TODO
+
+    Args:
+        img_file: A file containing the image to be converted into a bitmap
+    
+    Returns: 
+    TODO
+    """
 
     img = Image.open(img_file)
     ary = np.array(img)
@@ -20,3 +33,4 @@ def img_bitmap_converter(img_file):
     im = Image.fromarray(bitmap.astype(np.uint8))
     im.save("current.bmp")
     return "current.bmp"
+    
