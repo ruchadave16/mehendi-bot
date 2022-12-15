@@ -61,14 +61,15 @@ def write_to_serial(gcode_array):
         gcode_array: An array representing each of the G-Code commands that are to be executed by
             the machine
     """
-    gcode_array = ["", "", "", "", "", "", ""] + gcode_array
-    arduino.write(bytes("Starting", 'utf-8'))
+    # gcode_array = ["", "", "", "", "", "", ""] + gcode_array
     time.sleep(1.0)
 
     for command in gcode_array:
-        data = write_read(command)
-        print(f"Received: '{data}'")
+        if "G1" in command:
+            data = write_read(command)
+            print(f"Received: '{data}'")
 
-        while ("G1" or "M") not in data:
-            time.sleep(0.5)
-            data = fetch_data()
+            while "G" not in data:
+                print("waiting")
+                time.sleep(0.5)
+                data = fetch_data()

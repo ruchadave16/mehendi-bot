@@ -11,11 +11,12 @@
 
 // Define motors
 Stepper stepperY1(200, 2, 3);
-Stepper stepperX(200, 5, 6);
-//Stepper stepperY2(200, 2, 3);
+Stepper stepperX(200, 4, 5);
+Stepper stepperY2(200, 6, 7);
 
-int STEPS = 200; 
-int SPEED = 50;
+int STEPS = 200;
+int PICK_SPEED = 50;
+
 
 String curr_line;
 float feedrate = 0;
@@ -49,9 +50,9 @@ void setup() {
   Serial.setTimeout(1);
   help();
   set_feedrate(5000);
-  stepperX.setSpeed(SPEED);
-  stepperY1.setSpeed(SPEED);
-//  stepperY2.setSpeed(SPEED);
+  stepperX.setSpeed(PICK_SPEED);
+  stepperY1.setSpeed(PICK_SPEED);
+  stepperY2.setSpeed(PICK_SPEED);
 
   x_pos = 0;
   y_pos = 0;
@@ -63,7 +64,6 @@ void setup() {
   */
 void ready() {
   curr_line = "";
-  // Serial.print(F("> "));
 }
 
 /**
@@ -115,9 +115,8 @@ void moveLine(String new_x, String new_y) {
       if (reset >= x_change) {
         reset -= x_change;
         stepperY1.step(y_dir);
-//        stepperY2.step(y_dir);
+        stepperY2.step(y_dir);
       }
-      // pause(step_delay);
     }
   }
   else {
@@ -126,13 +125,12 @@ void moveLine(String new_x, String new_y) {
     for (int i = 0; i < y_change; i++) {
       // Serial.print(step_delay);
       stepperY1.step(y_dir); 
-//      stepperY2.step(y_dir);  
+      stepperY2.step(y_dir);  
       reset += x_change;
       if (reset >= y_change) {
         reset -= y_change;
         stepperX.step(x_dir);
       }
-      // pause(step_delay);
     }
   }
   set_feedrate(5000);
@@ -144,12 +142,6 @@ void moveLine(String new_x, String new_y) {
 
 void loop() {
   if (Serial.available()) {
-    
-    // Serial.print("Start");
-    // delay(1000);
-    // Serial.print("Next");
-    // delay(3);
-
     char this_char = Serial.read();
     curr_line += this_char;
 
@@ -158,13 +150,7 @@ void loop() {
       Serial.print(curr_line);
       runCommand();
       curr_line = "";
-  
-  // Get next character from Serial
-  // Serial.print("Character: " + this_char);
 
-    // Serial.print(F("\r\n"));
-    // Serial.println(curr_line);
-    // Serial.print(curr_line);
     }
   }
 }
@@ -181,14 +167,10 @@ void runCommand() {
   else {
     G_command = (curr_line.substring(curr_line.indexOf("G") + 1)).toInt();    
   }
-  // Serial.print("Index: ");
-  // Serial.println(curr_line.indexOf("G"));
-  // Serial.println(G_command);
 
   // Run G commands
   if (G_command != 0) {
     // If 01 or 1 command, move in a line to the position X, Y given at speed F given (absolute positions)  
-    // Serial.print("")
     if (G_command == 1) {
       int F_speed_index = curr_line.indexOf("F");
       if (F_speed_index > -1) {
@@ -198,41 +180,14 @@ void runCommand() {
       int X_index = curr_line.indexOf("X");
       int X_end = X_index + curr_line.substring(X_index).indexOf(" ");
       int Y_index = curr_line.indexOf("Y");
-
-      // Serial.print("X: ");
-      // Serial.println(curr_line.substring(X_index + 1, X_end + 1));
-      // Serial.print("Y: ");
-      // Serial.println(curr_line.substring(Y_index + 1, curr_line.length() - 1));
-      // delay(10000);
       moveLine(curr_line.substring(X_index + 1, X_end + 1), curr_line.substring(Y_index + 1)); 
     }
-
-  //   if G_command == "2" {
-  //     // If 02, move in circular arc to position X, Y given with radius R given at speed F given
-  //     int F_speed = curr_line[strchr(curr_line, "F")];
-  //     set_feedrate(F_speed]);
-      
-  //     int radius = curr_line[strchr(curr_line, "R")];
-  //   }
-
-  //   if G_command == "3" {
-  //     // If 03, move in circular arc to position X, Y, given I, J as relative position at speed F
-  //     int F_speed = curr_line[strchr(curr_line, "F")];
-  //     set_feedrate(F_speed]);
-
-      
-  //   }
 
     // If 04, delay for the time P given
     if (G_command == 4) {
       int delay_period = curr_line.substring(curr_line.indexOf("P") + 1).toInt();
       delay(delay_period * 1000);
-      // Serial.println("Done");
     }
     
   }
-  else {
-    // Serial.println("No G");
-  }
-  // Serial.print("done");
 }
