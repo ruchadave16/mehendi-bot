@@ -41,7 +41,7 @@ def write_read(x):
     time.sleep(1.0)
     arduino.write(bytes(x, 'utf-8'))
 
-    print(f"Sent: {x}")
+    print(f"Sent: '{x}'")
     time.sleep(1.0)
     data = fetch_data()
 
