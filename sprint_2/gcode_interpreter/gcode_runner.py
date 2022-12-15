@@ -1,7 +1,3 @@
-"""
-Runner for Mehendi Bot serial communication
-"""
-
 from gcode_processor import separate_lines
 from gcode_processor import write_to_serial
 

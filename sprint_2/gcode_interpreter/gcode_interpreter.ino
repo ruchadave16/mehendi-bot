@@ -4,25 +4,19 @@
   * Purpose: interpret gcode commands into arduino for mehendi bot
 
   * @author: Rucha Dave
-  * @version: 1.3
+  * @version: 1.1
   */
 
 #include <Stepper.h>
-#include <Servo.h>
 
-// Stepper variables
+// Define motors
 Stepper stepperY1(200, 2, 3);
 Stepper stepperX(200, 5, 6);
-// Stepper stepperY2(200, 2, 3);
+//Stepper stepperY2(200, 2, 3);
+
 int STEPS = 200; 
 int SPEED = 50;
 
-// Servo variables
-Servo servo1
-int servo_pin = 10;
-int servo_move = 20;
-
-// Other variables
 String curr_line;
 float feedrate = 0;
 float step_delay = 1;
@@ -34,6 +28,12 @@ float reset;
 float x_change;
 float y_change;
 
+/**
+  * Provide basic description of project and what each function does
+  */  
+void help() {
+  // Serial.println("Mehendi Bot");
+}
 
 /**
   * Set feedrate and step_delay based on the value entered.
@@ -42,6 +42,28 @@ float y_change;
 void set_feedrate(float fr) {
   step_delay = 1000000.0/fr;
   feedrate = fr;
+}
+
+void setup() {
+  Serial.begin(115200);
+  Serial.setTimeout(1);
+  help();
+  set_feedrate(5000);
+  stepperX.setSpeed(SPEED);
+  stepperY1.setSpeed(SPEED);
+//  stepperY2.setSpeed(SPEED);
+
+  x_pos = 0;
+  y_pos = 0;
+  ready();
+}
+
+/**
+  * Initiate serial
+  */
+void ready() {
+  curr_line = "";
+  // Serial.print(F("> "));
 }
 
 /**
@@ -95,12 +117,14 @@ void moveLine(String new_x, String new_y) {
         stepperY1.step(y_dir);
 //        stepperY2.step(y_dir);
       }
+      // pause(step_delay);
     }
   }
   else {
     // Serial.println(y_change);
     reset = y_change / 2;
     for (int i = 0; i < y_change; i++) {
+      // Serial.print(step_delay);
       stepperY1.step(y_dir); 
 //      stepperY2.step(y_dir);  
       reset += x_change;
@@ -108,6 +132,7 @@ void moveLine(String new_x, String new_y) {
         reset -= y_change;
         stepperX.step(x_dir);
       }
+      // pause(step_delay);
     }
   }
   set_feedrate(5000);
@@ -117,39 +142,53 @@ void moveLine(String new_x, String new_y) {
   y_pos = y_new;
 }
 
-/**
-  * Move Z-axis down or up
-  * @param: direction String representing the direction to move the servo in
-  */
-void moveZ(String direction):
-  if (direction == "up") {
-    servo1.write(servo_move);
+void loop() {
+  if (Serial.available()) {
+    
+    // Serial.print("Start");
+    // delay(1000);
+    // Serial.print("Next");
+    // delay(3);
+
+    char this_char = Serial.read();
+    curr_line += this_char;
+
+    // Run command per line
+    if ((this_char == ';') && (curr_line.length() > 0)) {
+      Serial.print(curr_line);
+      runCommand();
+      curr_line = "";
+  
+  // Get next character from Serial
+  // Serial.print("Character: " + this_char);
+
+    // Serial.print(F("\r\n"));
+    // Serial.println(curr_line);
+    // Serial.print(curr_line);
+    }
   }
-  if (direction == "down") {
-    servo1.write(0);
-  }
+}
 
 /**
   * Given commands in GCode, perform the actions required
   */
 void runCommand() {
   int G_command;
-  int M_command;
   
-  // Check what G Command was sent
   if (curr_line.indexOf(" ") != -1) {
     G_command = (curr_line.substring(curr_line.indexOf("G") + 1, curr_line.indexOf(" ") + 1)).toInt();
   }
   else {
     G_command = (curr_line.substring(curr_line.indexOf("G") + 1)).toInt();    
   }
-
-  // Check what M Command was sent
-  M_command = (curr_line.substring(curr_line.indexOf("M") + 1)).toInt();
+  // Serial.print("Index: ");
+  // Serial.println(curr_line.indexOf("G"));
+  // Serial.println(G_command);
 
   // Run G commands
   if (G_command != 0) {
     // If 01 or 1 command, move in a line to the position X, Y given at speed F given (absolute positions)  
+    // Serial.print("")
     if (G_command == 1) {
       int F_speed_index = curr_line.indexOf("F");
       if (F_speed_index > -1) {
@@ -160,57 +199,40 @@ void runCommand() {
       int X_end = X_index + curr_line.substring(X_index).indexOf(" ");
       int Y_index = curr_line.indexOf("Y");
 
+      // Serial.print("X: ");
+      // Serial.println(curr_line.substring(X_index + 1, X_end + 1));
+      // Serial.print("Y: ");
+      // Serial.println(curr_line.substring(Y_index + 1, curr_line.length() - 1));
+      // delay(10000);
       moveLine(curr_line.substring(X_index + 1, X_end + 1), curr_line.substring(Y_index + 1)); 
     }
+
+  //   if G_command == "2" {
+  //     // If 02, move in circular arc to position X, Y given with radius R given at speed F given
+  //     int F_speed = curr_line[strchr(curr_line, "F")];
+  //     set_feedrate(F_speed]);
+      
+  //     int radius = curr_line[strchr(curr_line, "R")];
+  //   }
+
+  //   if G_command == "3" {
+  //     // If 03, move in circular arc to position X, Y, given I, J as relative position at speed F
+  //     int F_speed = curr_line[strchr(curr_line, "F")];
+  //     set_feedrate(F_speed]);
+
+      
+  //   }
 
     // If 04, delay for the time P given
     if (G_command == 4) {
       int delay_period = curr_line.substring(curr_line.indexOf("P") + 1).toInt();
       delay(delay_period * 1000);
+      // Serial.println("Done");
     }
     
   }
-
-  // Run M commands
-  if (M_command != 0) {
-    // If M3, move down
-    if (M_command == 3) {
-      moveZ("down");
-    }
-    
-    // If M5, move up
-    if (M_command == 5) {
-      moveZ("up");
-    }
-  }  
-}
-
-void setup() {
-  Serial.begin(115200);
-  Serial.setTimeout(1);
-  set_feedrate(5000);
-  stepperX.setSpeed(SPEED);
-  stepperY1.setSpeed(SPEED);
-//  stepperY2.setSpeed(SPEED);
-  servo1.attach(servo_pin);
-
-  curr_line = "";  
-  x_pos = 0;
-  y_pos = 0;
-  ready();
-
-}
-
-void loop() {
-  if (Serial.available()) {
-    char this_char = Serial.read();
-    curr_line += this_char;
-
-    // Run command per line
-    if ((this_char == ';') && (curr_line.length() > 0)) {
-      Serial.print(curr_line);
-      runCommand();
-      curr_line = "";
-    }
+  else {
+    // Serial.println("No G");
   }
+  // Serial.print("done");
 }
